@@ -1,6 +1,6 @@
 /*Функция поиска случайного числа*/
 
-function randomNumbers (min, max) {
+function getRandomNumbers (min, max) {
   const minRoundCeil = Math.ceil(min);
   const maxRoundCeil = Math.ceil(max);
   const maxRoundFloor = Math.floor(max);
@@ -13,11 +13,11 @@ function randomNumbers (min, max) {
   }
 }
 
-randomNumbers(2.7, 2.9);
+getRandomNumbers(2.7, 2.9);
 
 /*Функция выбора случайного элемента массива*/
 
-const getRandomArrayElement = (elements) => elements[randomNumbers(0, elements.length - 1)];
+const getRandomArrayElement = (elements) => elements[getRandomNumbers(0, elements.length - 1)];
 
 /*Функция определения максимальной длины строки*/
 
@@ -34,7 +34,7 @@ calculateMaxLength ('I Love Js', 10);
 
 /*Выполнение задания "Больше деталей"*/
 
-const DESCRIPTION = [
+const PHOTO_DESCRIPTION = [
   'Самая лучшая фотография котика EVER!',
   'Зачем страдать, когда можно потискать котика!',
   'Разве можно не любить эти пушистые комки счастья?!',
@@ -70,30 +70,30 @@ const SIMILAR_POSTS_COUNT = 25;
 
 /*Формирование массива комментариев*/
 
-const createComment = () => ({
-  id: randomNumbers(1, 1000000),
-  avatar: `img/avatar-${  randomNumbers(1, 6)  }.svg`,
+const createComment = (index) => ({
+  id: index + 1,
+  avatar: `img/avatar-${  getRandomNumbers(1, 6)  }.svg`,
   message: getRandomArrayElement(MESSAGE),
   name: getRandomArrayElement(USER_NAME),
 });
 
-const createComments = Array.from({length: SIMILAR_COMMENTS_COUNT}, createComment);
+const commentsArray = Array.from({length: SIMILAR_COMMENTS_COUNT},  (currentValue, index) => createComment(index));
 
 /*Формирование массива постов*/
 
-const createPost = () => ({
-  id: randomNumbers(1, 25),
-  url: `photos/${  randomNumbers(1, 25)  }.jpg`,
-  description: getRandomArrayElement(DESCRIPTION),
-  likes: randomNumbers(15, 200),
-  firstComment: getRandomArrayElement(createComments),
-  secondComment: getRandomArrayElement(createComments),
-  thirdComment: getRandomArrayElement(createComments),
+const createPost = (index) => ({
+  id: index + 1,
+  url: `photos/${  getRandomNumbers(1, 25)  }.jpg`,
+  description: getRandomArrayElement(PHOTO_DESCRIPTION),
+  likes: getRandomNumbers(15, 200),
+  firstComment: getRandomArrayElement(commentsArray),
+  secondComment: getRandomArrayElement(commentsArray),
+  thirdComment: getRandomArrayElement(commentsArray),
 });
 
-const createPosts = Array.from({length: SIMILAR_POSTS_COUNT}, createPost);
+const postsArray = Array.from({length: SIMILAR_POSTS_COUNT}, (currentValue, index) => createPost(index));
 
 /*Вызов случайного поста, чтобы линтер не ругался*/
 
-getRandomArrayElement(createPosts);
+getRandomArrayElement(postsArray);
 
