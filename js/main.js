@@ -1,5 +1,3 @@
-import {createPosts} from './data.js';
+import './data.js';
+import './render.js';
 
-/*Вызов функции формирования массива постов, чтобы линтер не ругался*/
-
-createPosts();
