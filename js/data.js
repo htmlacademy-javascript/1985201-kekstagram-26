@@ -34,8 +34,6 @@ const MESSAGE = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-const SIMILAR_COMMENTS_COUNT = 10;
-
 const SIMILAR_POSTS_COUNT = 25;
 
 /*Формирование массива комментариев*/
@@ -47,7 +45,7 @@ const createComment = (index) => ({
   name: getRandomArrayElement(USER_NAME),
 });
 
-const createComments = () => Array.from({length: SIMILAR_COMMENTS_COUNT},  (currentValue, index) => createComment(index));
+const createComments = () => Array.from({length:  getRandomNumbers(1,10)},  (currentValue, index) => createComment(index));
 
 /*Формирование массива постов*/
 
@@ -56,9 +54,7 @@ const createPost = (index) => ({
   url: `photos/${  getRandomNumbers(1, 25)  }.jpg`,
   description: getRandomArrayElement(PHOTO_DESCRIPTION),
   likes: getRandomNumbers(15, 200),
-  firstComment: getRandomArrayElement(createComments()),
-  secondComment: getRandomArrayElement(createComments()),
-  thirdComment: getRandomArrayElement(createComments()),
+  comments: (createComments()),
 });
 
 const createPosts = () => Array.from({length: SIMILAR_POSTS_COUNT}, (currentValue, index) => createPost(index));
