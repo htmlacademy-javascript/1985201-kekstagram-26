@@ -1,5 +1,7 @@
 import {createPosts} from './data.js';
 
+/*Отрисовка миниатюр постов пользователей с лайками и комментариями*/
+
 const usersPosts = document.querySelector('.pictures');
 
 const similarPostTemplate = document.querySelector('#picture')
@@ -19,3 +21,5 @@ similarPosts.forEach(({url, comments, likes}) => {
 });
 
 usersPosts.appendChild(similarListFragment);
+
+export {similarPosts};
