@@ -2,24 +2,28 @@ import {createPosts} from './data.js';
 
 /*Отрисовка миниатюр постов пользователей с лайками и комментариями*/
 
-const usersPosts = document.querySelector('.pictures');
+const renderPictures = () => {
 
-const similarPostTemplate = document.querySelector('#picture')
-  .content
-  .querySelector('.picture');
+  const usersPosts = document.querySelector('.pictures');
 
-const similarPosts = createPosts();
+  const similarPostTemplate = document.querySelector('#picture')
+    .content
+    .querySelector('.picture');
 
-const similarListFragment = document.createDocumentFragment();
+  const similarPosts = createPosts();
 
-similarPosts.forEach(({url, comments, likes}) => {
-  const postElement = similarPostTemplate.cloneNode(true);
-  postElement.querySelector('.picture__img').src = url;
-  postElement.querySelector('.picture__comments').textContent = comments.length;
-  postElement.querySelector('.picture__likes').textContent = likes;
-  similarListFragment.appendChild(postElement);
-});
+  const similarListFragment = document.createDocumentFragment();
 
-usersPosts.appendChild(similarListFragment);
+  similarPosts.forEach(({url, comments, likes}) => {
+    const postElement = similarPostTemplate.cloneNode(true);
+    postElement.querySelector('.picture__img').src = url;
+    postElement.querySelector('.picture__comments').textContent = comments.length;
+    postElement.querySelector('.picture__likes').textContent = likes;
+    similarListFragment.appendChild(postElement);
+  });
 
-export {similarPosts};
+  usersPosts.appendChild(similarListFragment);
+
+};
+
+export {renderPictures};
