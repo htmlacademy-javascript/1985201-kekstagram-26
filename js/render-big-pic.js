@@ -1,24 +1,27 @@
-import {renderPictures} from './render.js';
+const bigPicture = document.querySelector('.big-picture');
+const bigPictureImg = bigPicture.querySelector('.big-picture__img').querySelector('img');
+const CloseButton = bigPicture.querySelector('.big-picture__cancel');
+const likesCount = document.querySelector('.likes-count');
+const commentsCount = document.querySelector('.comments-count');
 
-const renderBigPicture = () => {
-  renderPictures();
+/*Открытие*/
 
-  const bigPicture = document.querySelector('.big-picture');
-  const bigPictureImg = bigPicture.querySelector('.big-picture__img').querySelector('img');
-  const CloseButton = bigPicture.querySelector('.big-picture__cancel');
-  const likesCount = document.querySelector('.likes-count');
-  const commentsCount = document.querySelector('.comments-count');
+function openBigPicture () {
+  bigPicture.classList.remove('hidden');
+  const socialCommentCount = document.querySelector('.social__comment-count');
+  const commentsLoader = document.querySelector('.comments-loader');
+  socialCommentCount.classList.add('hidden');
+  commentsLoader.classList.add('hidden');
+  document.body.classList.add('modal-open');
+}
 
-  /*Открытие*/
+const renderBigPicture = (url, comments, likes, description) => {
 
-  function openBigPicture () {
-    bigPicture.classList.remove('hidden');
-    const socialCommentCount = document.querySelector('.social__comment-count');
-    const commentsLoader = document.querySelector('.comments-loader');
-    socialCommentCount.classList.add('hidden');
-    commentsLoader.classList.add('hidden');
-    document.body.classList.add('modal-open');
-  }
+  openBigPicture();
+
+  bigPictureImg.src = url;
+  likesCount.textContent = likes;
+  commentsCount.textContent = comments.length;
 
   /*Закрытие (по клику и ESC)*/
 
@@ -42,27 +45,6 @@ const renderBigPicture = () => {
   /*Закрытие при нажатии на кнопку*/
 
   CloseButton.addEventListener('click', () => closeBigPicture());
-
-  const pictures = document.querySelector('.pictures');
-
-  /*Обработчик события, чтобы находилась текущая фотография*/
-
-  pictures.addEventListener('click', (evt) => {
-    const currentTarget = evt.target;
-
-    /*Проверка условия: если объект, на который кликнули - картинка*/
-
-    if(currentTarget.classList.contains('picture__img')) {
-
-      bigPictureImg.src = currentTarget.src;
-      likesCount.textContent = currentTarget.querySelector('.picture__likes');
-      commentsCount.textContent = currentTarget.querySelector('.picture__comments');
-
-      openBigPicture();
-    }
-  });
 };
 
-renderBigPicture();
-
-
+export {renderBigPicture};
