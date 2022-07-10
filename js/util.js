@@ -33,3 +33,5 @@ function calculateMaxLength (content, maxLength) {
 calculateMaxLength ('I Love Js', 10);
 
 export {getRandomNumbers, getRandomArrayElement};
+
+

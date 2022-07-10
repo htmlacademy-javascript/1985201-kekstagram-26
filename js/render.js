@@ -1,21 +1,34 @@
 import {createPosts} from './data.js';
+import {renderBigPicture} from './render-big-pic.js';
 
-const usersPosts = document.querySelector('.pictures');
+/*Отрисовка миниатюр постов пользователей с лайками и комментариями*/
 
-const similarPostTemplate = document.querySelector('#picture')
-  .content
-  .querySelector('.picture');
+const renderPictures = () => {
 
-const similarPosts = createPosts();
+  const usersPosts = document.querySelector('.pictures');
 
-const similarListFragment = document.createDocumentFragment();
+  const similarPostTemplate = document.querySelector('#picture')
+    .content
+    .querySelector('.picture');
 
-similarPosts.forEach(({url, comments, likes}) => {
-  const postElement = similarPostTemplate.cloneNode(true);
-  postElement.querySelector('.picture__img').src = url;
-  postElement.querySelector('.picture__comments').textContent = comments.length;
-  postElement.querySelector('.picture__likes').textContent = likes;
-  similarListFragment.appendChild(postElement);
-});
+  const similarPosts = createPosts();
 
-usersPosts.appendChild(similarListFragment);
+  const similarListFragment = document.createDocumentFragment();
+
+  similarPosts.forEach(({url, comments, likes, description}) => {
+    const postElement = similarPostTemplate.cloneNode(true);
+    postElement.querySelector('.picture__img').src = url;
+    postElement.querySelector('.picture__comments').textContent = comments.length;
+    postElement.querySelector('.picture__likes').textContent = likes;
+    similarListFragment.appendChild(postElement);
+    postElement.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      renderBigPicture(url, comments, likes, description);
+    });
+  });
+
+  usersPosts.appendChild(similarListFragment);
+
+};
+
+renderPictures();
