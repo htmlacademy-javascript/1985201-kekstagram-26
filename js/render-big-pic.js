@@ -1,47 +1,73 @@
+import {isEscapeKey, isEnterKey} from './util.js';
+
 /*Список констант*/
 
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImg = bigPicture.querySelector('.big-picture__img').querySelector('img');
-const CloseButton = bigPicture.querySelector('.big-picture__cancel');
+const closeButton = bigPicture.querySelector('.big-picture__cancel');
 const likesCount = document.querySelector('.likes-count');
 const commentsCount = document.querySelector('.comments-count');
 const socialCaption = document.querySelector('.social__caption');
 const socialComments = document.querySelector('.social__comments');
 const socialCommentTemplate = socialComments.querySelector(':first-child');
+const socialCommentCount = document.querySelector('.social__comment-count');
+const commentsLoader = document.querySelector('.comments-loader');
 
 /*Открытие*/
 
+const onDocumentEnterKeydown = (evt) => {
+  if ( isEnterKey(evt) ) {
+    evt.preventDefault();
+    openBigPicture();
+  }
+};
+
+document.addEventListener('keydown', onDocumentEnterKeydown);
+
 function openBigPicture () {
   bigPicture.classList.remove('hidden');
-  const socialCommentCount = document.querySelector('.social__comment-count');
-  const commentsLoader = document.querySelector('.comments-loader');
+  socialCommentCount.classList.add('hidden');
+  commentsLoader.classList.add('hidden');
+  document.body.classList.add('modal-open');
+  document.removeEventListener('keydown', onDocumentEnterKeydown);
+}
+
+/*Закрытие*/
+
+/*Закрытие с помощью нажатия ESC и ENTER и кликом по кнопке*/
+
+const onDocumentEscKeydown = (evt) => {
+  if ( isEscapeKey(evt) ) {
+    evt.preventDefault();
+    closeBigPicture();
+    document.removeEventListener('keydown', onDocumentEscKeydown);
+  }
+};
+
+const onCloseButtonEnterKeydown = (evt) => {
+  if ( isEnterKey(evt) ) {
+    evt.preventDefault();
+    closeBigPicture();
+    closeButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
+  }
+};
+
+const onCloseButtonClick = (evt) => {
+  evt.preventDefault();
+  closeBigPicture();
+  closeButton.removeEventListener('keydown', onCloseButtonClick);
+};
+
+document.addEventListener('keydown', onDocumentEscKeydown);
+closeButton.addEventListener('keydown', onCloseButtonEnterKeydown);
+closeButton.addEventListener('click', onCloseButtonClick);
+
+function closeBigPicture () {
+  bigPicture.classList.add('hidden');
   socialCommentCount.classList.add('hidden');
   commentsLoader.classList.add('hidden');
   document.body.classList.add('modal-open');
 }
-
-/*Закрытие (по клику и ESC)*/
-
-/*Закрытие с помощью ESC*/
-
-const pressEsc = document.addEventListener('keydown', (evt) => {
-  if ( evt.key === 'Escape' ) {
-    evt.preventDefault();
-    bigPicture.classList.add('hidden');
-  }
-});
-
-/*Закрытие по клику*/
-
-function closeBigPicture () {
-  bigPicture.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  document.removeEventListener('keydown', pressEsc);
-}
-
-/*Закрытие при нажатии на кнопку*/
-
-CloseButton.addEventListener('click', () => closeBigPicture());
 
 const renderBigPicture = (url, comments, likes, description) => {
 
