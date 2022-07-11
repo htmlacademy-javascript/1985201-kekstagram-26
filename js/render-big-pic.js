@@ -15,21 +15,11 @@ const commentsLoader = document.querySelector('.comments-loader');
 
 /*Открытие*/
 
-const onDocumentEnterKeydown = (evt) => {
-  if ( isEnterKey(evt) ) {
-    evt.preventDefault();
-    openBigPicture();
-  }
-};
-
-document.addEventListener('keydown', onDocumentEnterKeydown);
-
 function openBigPicture () {
   bigPicture.classList.remove('hidden');
   socialCommentCount.classList.add('hidden');
   commentsLoader.classList.add('hidden');
   document.body.classList.add('modal-open');
-  document.removeEventListener('keydown', onDocumentEnterKeydown);
 }
 
 /*Закрытие*/
@@ -40,7 +30,6 @@ const onDocumentEscKeydown = (evt) => {
   if ( isEscapeKey(evt) ) {
     evt.preventDefault();
     closeBigPicture();
-    document.removeEventListener('keydown', onDocumentEscKeydown);
   }
 };
 
@@ -48,14 +37,12 @@ const onCloseButtonEnterKeydown = (evt) => {
   if ( isEnterKey(evt) ) {
     evt.preventDefault();
     closeBigPicture();
-    closeButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
   }
 };
 
 const onCloseButtonClick = (evt) => {
   evt.preventDefault();
   closeBigPicture();
-  closeButton.removeEventListener('keydown', onCloseButtonClick);
 };
 
 document.addEventListener('keydown', onDocumentEscKeydown);
@@ -66,7 +53,9 @@ function closeBigPicture () {
   bigPicture.classList.add('hidden');
   socialCommentCount.classList.add('hidden');
   commentsLoader.classList.add('hidden');
-  document.body.classList.add('modal-open');
+  document.body.classList.remove('modal-open');
+  closeButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
+  closeButton.removeEventListener('keydown', onCloseButtonClick);
 }
 
 const renderBigPicture = (url, comments, likes, description) => {
