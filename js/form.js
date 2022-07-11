@@ -2,32 +2,24 @@ import {isEscapeKey, isEnterKey} from './util.js';
 
 /*Константы*/
 
+const imgUploadForm = document.querySelector('.img-upload__form');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
-const imgUploadLabel = document.querySelector('.img-upload__label');
+const imgUploadLabelId = document.querySelector('#upload-file');
 const imgUploadCloseButton = document.querySelector('.img-upload__cancel');
+const commentInput = imgUploadForm.querySelector('.text__description');
+const hashtagInput = imgUploadForm.querySelector('.text__hashtags');
 
-/*Открытие*/
+/*Открытие окна загрузки*/
 
-const onLabelEnterKeydown = (evt) => {
-  if ( isEnterKey(evt) ) {
-    evt.preventDefault();
-    openUploadOverlay();
-  }
-};
-
-const onLabelClick = (evt) => {
-  evt.preventDefault();
+const onLabelChange = () => {
   openUploadOverlay();
 };
 
-imgUploadLabel.addEventListener('keydown', onLabelEnterKeydown);
-imgUploadLabel.addEventListener('click', onLabelClick);
+imgUploadLabelId.addEventListener('change', onLabelChange);
 
 function openUploadOverlay () {
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  document.removeEventListener('keydown', onLabelEnterKeydown);
-  document.removeEventListener('click', onLabelClick);
 }
 
 /*Закрытие*/
@@ -60,6 +52,7 @@ imgUploadCloseButton.addEventListener('click', onCloseButtonClick);
 function closeUploadOverlay () {
   imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
+  imgUploadLabelId.value = null;
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonClick);
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
 }
