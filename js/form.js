@@ -65,9 +65,66 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextClass: 'img-upload__error-text',
 });
 
+/*Массив хэш-тегов*/
+
+const hashtagsArray = hashtagInput.value.split(' ');
+
+/*Проверка хэш-тегов на кол-во не более 5*/
+
+const matchHastagsAmount = () => {
+  if (hashtagsArray.length > 5) {
+    return false;
+  }
+};
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__hashtags'),
+  matchHastagsAmount,
+  'Количество хэш-тегов не должно превышать 5'
+);
+
+/*Проверка хэш-тегов на соответствие заданным параметрам:
+- хэш-тег начинается с символа # (решётка);
+- строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.),
+символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.;
+- хеш-тег не может состоять только из одной решётки;
+- максимальная длина одного хэш-тега 20 символов, включая решётку;*/
+
+const regularExpression = /^#[A-Za-zА-яа-яЁё0-9]{1,19}$/;
+const checkHastagsСontent = () => {
+  for (let i = 0; i < hashtagsArray.length; i++) {
+    if (!regularExpression.test(hashtagsArray[i])) {
+      return false;
+    }
+  }
+};
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__hashtags'),
+  checkHastagsСontent,
+  'Хэш-тег должен иметь определённый синтаксис'
+);
+
+/*Проверка хэш-тегов на неповторение*/
+
+const areHashtagsUnique = () => {
+  const hashtagsArrayDuplicate = [];
+  hashtagsArray.forEach((hashtag) => {
+    if (!hashtagsArrayDuplicate.includes(hashtag)) {
+      hashtagsArrayDuplicate.push(hashtag);
+    }
+  });
+  return hashtagsArrayDuplicate.length === hashtagsArray.length;
+};
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__hashtags'),
+  areHashtagsUnique,
+  'Хэш-теги не должны повторяться'
+);
+
 imgUploadForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-
   const isValid = pristine.validate();
   if (isValid) {
     console.log('Можно отправлять');
@@ -75,14 +132,3 @@ imgUploadForm.addEventListener('submit', (evt) => {
     console.log('Форма невалидна');
   }
 });
-
-function hashtagLength (value) {
-  return value.length <= 20;
-
-}
-
-pristine.addValidator(
-  orderForm.querySelector('#nickname'),
-  validateNickname,
-  'От 2 до 50 символов'
-);
