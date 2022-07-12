@@ -56,3 +56,33 @@ function closeUploadOverlay () {
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonClick);
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
 }
+
+/*Валидация формы*/
+
+const pristine = new Pristine(imgUploadForm, {
+  classTo: 'img-upload__field-wrapper',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'img-upload__error-text',
+});
+
+imgUploadForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+
+  const isValid = pristine.validate();
+  if (isValid) {
+    console.log('Можно отправлять');
+  } else {
+    console.log('Форма невалидна');
+  }
+});
+
+function hashtagLength (value) {
+  return value.length <= 20;
+
+}
+
+pristine.addValidator(
+  orderForm.querySelector('#nickname'),
+  validateNickname,
+  'От 2 до 50 символов'
+);
