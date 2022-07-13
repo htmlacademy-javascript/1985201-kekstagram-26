@@ -57,25 +57,47 @@ function closeUploadOverlay () {
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
 }
 
+/*Отмена работы ESС при фокусе (не получилось; долго по-разному пробовала и никак; это последний вариант)*/
+
+/*const onEvtTargetEscKeydown = (evt) => {
+  if (((isEscapeKey(evt)) && (evt.target === hashtagInput)) || ((isEscapeKey(evt)) && (evt.target === commentInput))) {
+    evt.preventDefault();
+    evt.stopPropagation();
+  }
+};
+
+EventTarget.addEventListener('keydown', onEvtTargetEscKeydown);*/
+
 /*Валидация формы*/
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__error-text',
+  errorClass: 'img-upload__field-wrapper_invalid',
+  successClass: 'img-upload__field-wrapper_valid',
+  errorTextParent:'img-upload__field-wrapper',
+  errorTextTag: 'p',
+  errorTextClass: 'input__error'
 });
 
-/*Массив хэш-тегов*/
+/*Комментарии*/
 
-const hashtagsArray = hashtagInput.value.split(' ');
+function matchCommentSymbolsAmount() {
+  return commentInput.value.length <= 140;
+}
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__description'),
+  matchCommentSymbolsAmount,
+  'Количество символов в комментарии не должно превышать 140'
+);
+
+/*Хеш-тэги*/
 
 /*Проверка хэш-тегов на кол-во не более 5*/
 
-const matchHastagsAmount = () => {
-  if (hashtagsArray.length > 5) {
-    return false;
-  }
-};
+function matchHastagsAmount() {
+  return hashtagInput.value.split(' ').length <= 5;
+}
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
@@ -90,14 +112,10 @@ pristine.addValidator(
 - хеш-тег не может состоять только из одной решётки;
 - максимальная длина одного хэш-тега 20 символов, включая решётку;*/
 
-const regularExpression = /^#[A-Za-zА-яа-яЁё0-9]{1,19}$/;
-const checkHastagsСontent = () => {
-  for (let i = 0; i < hashtagsArray.length; i++) {
-    if (!regularExpression.test(hashtagsArray[i])) {
-      return false;
-    }
-  }
-};
+const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
+function checkHastagsСontent () {
+  return hashtagInput.value.split(' ').some((hashtag) => regularExpression.test(hashtag));
+}
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
@@ -107,15 +125,9 @@ pristine.addValidator(
 
 /*Проверка хэш-тегов на неповторение*/
 
-const areHashtagsUnique = () => {
-  const hashtagsArrayDuplicate = [];
-  hashtagsArray.forEach((hashtag) => {
-    if (!hashtagsArrayDuplicate.includes(hashtag)) {
-      hashtagsArrayDuplicate.push(hashtag);
-    }
-  });
-  return hashtagsArrayDuplicate.length === hashtagsArray.length;
-};
+function areHashtagsUnique() {
+  return (new Set(hashtagInput.value.split(' '))).size === hashtagInput.value.split(' ').length;
+}
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
@@ -123,12 +135,9 @@ pristine.addValidator(
   'Хэш-теги не должны повторяться'
 );
 
+/*Обработчик на форму*/
+
 imgUploadForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  const isValid = pristine.validate();
-  if (isValid) {
-    console.log('Можно отправлять');
-  } else {
-    console.log('Форма невалидна');
-  }
+  pristine.validate();
 });
