@@ -1,6 +1,6 @@
 /*Функция поиска случайного числа*/
 
-function getRandomNumbers (min, max) {
+const getRandomNumbers = (min, max) => {
   const minRoundCeil = Math.ceil(min);
   const maxRoundCeil = Math.ceil(max);
   const maxRoundFloor = Math.floor(max);
@@ -11,7 +11,7 @@ function getRandomNumbers (min, max) {
   } else {
     return result;
   }
-}
+};
 
 /*Функция выбора случайного элемента массива*/
 
@@ -19,14 +19,14 @@ const getRandomArrayElement = (elements) => elements[getRandomNumbers(0, element
 
 /*Функция определения максимальной длины строки*/
 
-function calculateMaxLength (content, maxLength) {
+const calculateMaxLength = (content, maxLength) => {
   const result = maxLength - content.length;
   if (result > 0) {
     return true;
   } else {
     return false;
   }
-}
+};
 
 /*Вызов функции определения максимальной длины строки, чтобы линтер не ругался*/
 
@@ -34,4 +34,12 @@ calculateMaxLength ('I Love Js', 10);
 
 export {getRandomNumbers, getRandomArrayElement};
 
+/*ESC*/
 
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+/*ENTER*/
+
+const isEnterKey = (evt) => evt.key === 'Enter';
+
+export {isEscapeKey, isEnterKey};
