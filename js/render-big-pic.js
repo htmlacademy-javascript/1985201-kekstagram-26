@@ -12,6 +12,7 @@ const socialComments = document.querySelector('.social__comments');
 const socialCommentTemplate = socialComments.querySelector(':first-child');
 const socialCommentCount = document.querySelector('.social__comment-count');
 const commentsLoader = document.querySelector('.comments-loader');
+const commentListFragment = document.createDocumentFragment();
 
 /*Открытие*/
 
@@ -54,53 +55,70 @@ function closeBigPicture () {
   closeButton.removeEventListener('keydown', onCloseButtonClick);
 }
 
+/*Отрисовка большой картинки*/
+
 const renderBigPicture = (url, comments, likes, description) => {
+
+  /*Открытие картинки*/
 
   openBigPicture();
 
-  const writeComment = (comment) => {
-    const newComment = socialCommentTemplate.cloneNode(true);
-    const commentAvatar = newComment.querySelector('img');
-    commentAvatar.src = comment.avatar;
-    commentAvatar.alt = comment.name;
-    newComment.querySelector('.social__text').textContent = comment.message;
-    socialComments.append(comment);
-
-    return newComment;
-  };
+  /*Сборка картинки*/
 
   bigPictureImg.src = url;
   likesCount.textContent = likes;
   commentsCount.textContent = comments.length;
   socialCaption.textContent = description;
 
-  if (comments.length <= 5) {
-    socialCommentCount.textContent = `${commentsCount.textContent} из ${commentsCount.textContent} комментариев`;
-    commentsLoader.classList.add('hidden');
-    socialComments.replaceChildren(...comments.map(writeComment));
-  } else {
-    socialCommentCount.textContent = `5 из ${commentsCount.textContent} комментариев`;
-    commentsLoader.classList.remove('hidden');
+  /*Загрузка комментариев (по 5 шт за раз)*/
 
-    socialComments.replaceChildren(...comments.map(writeComment).slice(0, 5));
+  /*Переменные для начального кол-ва комментариев и кол-ва комментариев к показу*/
 
-    const onButtonClick = () => {
-      let i = 5;
-      if ((comments.length - i) >= 5) {
-        for (; ((comments.length - i)%5) === 0; i = i + 5) {
-          socialComments.replaceChildren(...comments.map(writeComment).slice(0, (i)));
-          socialCommentCount.textContent = `${i} из ${commentsCount.textContent} комментариев`;
-        }
-      } else if ((comments.length - i) < 5) {
-        socialComments.replaceChildren(...comments.map(writeComment).slice(0, (commentsCount.textContent)));
-        socialCommentCount.textContent = `${commentsCount.textContent} из ${commentsCount.textContent} комментариев`;
-        commentsLoader.classList.add('hidden');
-      }
-    };
-    commentsLoader.addEventListener('click', onButtonClick);
-  }
+  let commentsQuantity = 0;
+  const maximumQuantityToShow = 5;
+
+  /*Функция, показывающая по 5 комментариев*/
+
+  const showMoreComments = () => {
+
+    /*Отрисовка*/
+
+    comments.slice(0, commentsQuantity += maximumQuantityToShow).forEach((comment) => {
+
+      const newComment = socialCommentTemplate.cloneNode(true);
+      const commentAvatar = newComment.querySelector('.social__picture');
+      commentAvatar.src = comment.avatar;
+      commentAvatar.alt = comment.name;
+      newComment.querySelector('.social__text').textContent = comment.message;
+
+      commentListFragment.append(newComment);
+    });
+
+    /*Вставка*/
+
+    socialComments.innerHTML = '';
+    socialComments.append(commentListFragment);
+
+    /*Условие проверки количества комментариев*/
+
+    if (commentsQuantity >= comments.length) {
+      commentsLoader.classList.add('hidden');
+      socialCommentCount.textContent = `${comments.length} из ${comments.length} комментариев`;
+    } else {
+      commentsLoader.classList.remove('hidden');
+      socialCommentCount.textContent = `${commentsQuantity} из ${comments.length} комментариев`;
+    }
+  };
+
+  showMoreComments();
+
+  /*Обработчик на кнопку "Загрузить ещё"*/
+
+  const onButtonClick = () => {
+    showMoreComments();
+  };
+
+  commentsLoader.addEventListener('click', onButtonClick);
 };
-
-/*Блок комментариев*/
 
 export {renderBigPicture};
