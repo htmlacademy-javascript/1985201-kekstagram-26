@@ -99,11 +99,7 @@ const onFormSubmit = (evt) => {
   evt.preventDefault();
   const isValid = pristine.validate();
   if (isValid) {
-    // eslint-disable-next-line no-alert
-    alert('Форма отправлена');
-  } else {
-    // eslint-disable-next-line no-alert
-    alert('Форма не отправлена');
+    imgUploadForm.submit();
   }
   hashtagInput.value = '';
   commentInput.value = '';

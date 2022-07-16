@@ -17,8 +17,6 @@ const commentsLoader = document.querySelector('.comments-loader');
 
 function openBigPicture () {
   bigPicture.classList.remove('hidden');
-  socialCommentCount.classList.add('hidden');
-  commentsLoader.classList.add('hidden');
   document.body.classList.add('modal-open');
 }
 
@@ -51,8 +49,6 @@ closeButton.addEventListener('click', onCloseButtonClick);
 
 function closeBigPicture () {
   bigPicture.classList.add('hidden');
-  socialCommentCount.classList.add('hidden');
-  commentsLoader.classList.add('hidden');
   document.body.classList.remove('modal-open');
   closeButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
   closeButton.removeEventListener('keydown', onCloseButtonClick);
@@ -68,6 +64,7 @@ const renderBigPicture = (url, comments, likes, description) => {
     commentAvatar.src = comment.avatar;
     commentAvatar.alt = comment.name;
     newComment.querySelector('.social__text').textContent = comment.message;
+    socialComments.append(comment);
 
     return newComment;
   };
@@ -76,7 +73,34 @@ const renderBigPicture = (url, comments, likes, description) => {
   likesCount.textContent = likes;
   commentsCount.textContent = comments.length;
   socialCaption.textContent = description;
-  socialComments.replaceChildren(...comments.map(writeComment));
+
+  if (comments.length <= 5) {
+    socialCommentCount.textContent = `${commentsCount.textContent} из ${commentsCount.textContent} комментариев`;
+    commentsLoader.classList.add('hidden');
+    socialComments.replaceChildren(...comments.map(writeComment));
+  } else {
+    socialCommentCount.textContent = `5 из ${commentsCount.textContent} комментариев`;
+    commentsLoader.classList.remove('hidden');
+
+    socialComments.replaceChildren(...comments.map(writeComment).slice(0, 5));
+
+    const onButtonClick = () => {
+      let i = 5;
+      if ((comments.length - i) >= 5) {
+        for (; ((comments.length - i)%5) === 0; i = i + 5) {
+          socialComments.replaceChildren(...comments.map(writeComment).slice(0, (i)));
+          socialCommentCount.textContent = `${i} из ${commentsCount.textContent} комментариев`;
+        }
+      } else if ((comments.length - i) < 5) {
+        socialComments.replaceChildren(...comments.map(writeComment).slice(0, (commentsCount.textContent)));
+        socialCommentCount.textContent = `${commentsCount.textContent} из ${commentsCount.textContent} комментариев`;
+        commentsLoader.classList.add('hidden');
+      }
+    };
+    commentsLoader.addEventListener('click', onButtonClick);
+  }
 };
+
+/*Блок комментариев*/
 
 export {renderBigPicture};
