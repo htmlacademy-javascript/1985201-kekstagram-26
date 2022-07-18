@@ -45,7 +45,7 @@ const createComment = (index) => ({
   name: getRandomArrayElement(USER_NAME),
 });
 
-const createComments = () => Array.from({length:  getRandomNumbers(1,20)},  (currentValue, index) => createComment(index));
+const createComments = () => Array.from({length:  getRandomNumbers(1,30)},  (currentValue, index) => createComment(index));
 
 /*Формирование массива постов*/
 
