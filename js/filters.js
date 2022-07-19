@@ -11,6 +11,10 @@ const filtersList = document.querySelector('.effects__list');
 
 filtersLevel.classList.add('hidden');
 
+/*Без фильтра*/
+
+const noFilter = 'none';
+
 /*Параметры слайдеров по каждому фильтру*/
 
 const filters = {
@@ -98,6 +102,12 @@ const resetFilters = () => {
   imgUploadPreview.style.filter = '';
 };
 
+/*Функция актуализации эффекта*/
+
+const updateFilters = (selectedFilter) => {
+  filtersLevelSlider.noUiSlider.updateOptions(selectedFilter.options);
+};
+
 /*Смена фильтров*/
 
 const onFiltersListChange = (evt) => {
@@ -109,6 +119,7 @@ const onFiltersListChange = (evt) => {
     imgUploadPreview.className = 'img-upload__preview';
     imgUploadPreview.classList.add(`effects__preview--${selectedFilter}`);
     filtersLevelSlider.noUiSlider.updateOptions(filters[selectedFilter].options);
+    updateFilters(filters[selectedFilter]);
   } else {
     resetFilters();
   }
@@ -118,3 +129,18 @@ filtersList.addEventListener('change', onFiltersListChange);
 
 /*Изменение интенсивности фильтров*/
 
+const onChangeFilterValue = (handlersValue) => {
+  const filterValue = handlersValue[0];
+  const effectTitle = imgUploadPreview.effect.value;
+
+  if (effectTitle === noFilter) {
+    return;
+  }
+
+  const filterTitle = filters[effectTitle].style;
+  const filterUnits = filters[effectTitle].unit;
+  imgUploadPreview.style.filter = `${filterTitle}(${filterValue}${filterUnits})`;
+  filtersLevelValue.value = filterValue;
+};
+
+export {updateFilters, onChangeFilterValue};
