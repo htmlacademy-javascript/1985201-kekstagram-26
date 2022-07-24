@@ -42,4 +42,10 @@ const onBiggerButtonClick = () => {
 scaleControlSmaller.addEventListener('click', onSmallerButtonClick);
 scaleControlBigger.addEventListener('click', onBiggerButtonClick);
 
-export { catchStartPhotoSize };
+const resetScale = () => {
+  currentPhotoSize = startPhotoSize;
+  imgUploadPreview.style.transform = '';
+  scaleControlValue.value = `${startPhotoSize}%`;
+};
+
+export { catchStartPhotoSize, scaleControlValue, resetScale };

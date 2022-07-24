@@ -1,4 +1,6 @@
-import {isEscapeKey, isEnterKey} from './util.js';
+import { isEscapeKey, isEnterKey } from './util.js';
+import { resetScale } from './scale.js';
+import { resetFilters } from './filters.js';
 
 /*Константы*/
 
@@ -50,6 +52,8 @@ function closeUploadOverlay () {
   imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   imgUploadLabelId.value = null;
+  resetScale();
+  resetFilters();
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonClick);
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
 }

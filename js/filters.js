@@ -1,102 +1,42 @@
+
 /*Константы*/
 
-const imgUploadPreview = document.querySelector('.img-upload__preview');
-const imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+// const imgUploadPreview = document.querySelector('.img-upload__preview');
+const imgUploadPreviewImg = document.querySelector('.img-upload__preview  img');
 const filtersLevelSlider = document.querySelector('.effect-level__slider');
 const filtersLevel = document.querySelector('.effect-level');
 const filtersLevelValue = document.querySelector('.effect-level__value');
-const filtersList = document.querySelector('.effects__list');
+const effectButtons = document.querySelectorAll('[name="effect"]');
+const noEffect = document.getElementById('effect-none');
 
 /*Сброс шкалы для изображения без фильтров*/
 
 filtersLevel.classList.add('hidden');
 
-/*Параметры слайдеров по каждому фильтру*/
+/*Функция очистки стилей*/
 
-const filters = {
-  chrome: {
-    filter: 'grayscale',
-    unit: '',
-    options: {
-      range: {
-        min: 0,
-        max: 1,
-      },
-      start: 1,
-      step: 0.1,
-    },
-  },
-  sepia: {
-    filter: 'sepia',
-    unit: '',
-    options: {
-      range: {
-        min: 0,
-        max: 1,
-      },
-      start: 1,
-      step: 0.1,
-    },
-  },
-  marvin: {
-    filter: 'invert',
-    unit: '%',
-    options: {
-      range: {
-        min: 0,
-        max: 100,
-      },
-      start: 100,
-      step: 1,
-    },
-  },
-  phobos: {
-    filter: 'blur',
-    unit: 'px',
-    options: {
-      range: {
-        min: 0,
-        max: 3,
-      },
-      start: 3,
-      step: 0.1,
-    },
-  },
-  heat: {
-    filter: 'brightness',
-    unit: '',
-    options: {
-      range: {
-        min: 1,
-        max: 3,
-      },
-      start: 3,
-      step: 0.1,
-    },
-  },
+const resetFilters = () => {
+  filtersLevel.classList.add('hidden');
+  imgUploadPreviewImg.removeAttribute('class');
+  imgUploadPreviewImg.removeAttribute('style');
+  noEffect.checked = true;
 };
 
-/*Поключение библиотеки noUiSlider*/
+/*Базовые характеристики слайдера*/
 
-noUiSlider.create(filtersLevelSlider, {
+const sliderBasic = {
   range: {
     min: 0,
     max: 1,
   },
-  start: 1,
+  start: 0,
   step: 0.1,
   connect: 'lower',
-});
-
-/*Функция сброса значений*/
-
-const resetFilters = () => {
-  filtersLevelSlider.setAttribute('disabled', true);
-  filtersLevel.classList.add('hidden');
-  imgUploadPreview.className = 'img-upload__preview';
-  filtersLevelValue.value = '';
-  imgUploadPreview.style.filter = '';
 };
+
+/*Поключение библиотеки noUiSlider*/
+
+noUiSlider.create(filtersLevelSlider, sliderBasic);
 
 /*Изменение интенсивности фильтров*/
 
@@ -106,35 +46,62 @@ filtersLevelSlider.noUiSlider.on('update', () => {
   filtersLevelValue.value = sliderValue;
   const selectedFilter = document.querySelector('input[name="effect"]:checked');
 
-  if (selectedFilter && selectedFilter.value !== 'none') {
-    const { filter, unit } = filters[selectedFilter.value];
-    imgUploadPreview.style.filter = `${filter}(${sliderValue}${unit})`;
+  if (selectedFilter.value === 'chrome') {
+    imgUploadPreviewImg.style.filter = `grayscale(${sliderValue})`;
+  }
+  if (selectedFilter.value === 'sepia') {
+    imgUploadPreviewImg.style.filter = `sepia(${sliderValue})`;
+  }
+  if (selectedFilter.value === 'marvin') {
+    imgUploadPreviewImg.style.filter = `invert(${sliderValue}%)`;
+  }
+  if (selectedFilter.value === 'phobos') {
+    imgUploadPreviewImg.style.filter = `blur(${sliderValue}px)`;
+  }
+  if (selectedFilter.value === 'heat') {
+    imgUploadPreviewImg.style.filter = `brightness(${sliderValue})`;
   }
 });
 
-/*Функция актуализации эффекта*/
+effectButtons.forEach((element) => {
 
-const updateFilters = (selectedFilter) => {
-  filtersLevelSlider.noUiSlider.updateOptions(selectedFilter.options);
-};
+  element.addEventListener('change', () => {
+    const settings = {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+    };
 
-/*Смена фильтров*/
+    imgUploadPreviewImg.removeAttribute('class');
 
-const onFiltersListChange = (evt) => {
+    if (element.value === 'marvin') {
+      settings.range.max = 100;
+      settings.start = 100;
+      settings.step = 1;
+    }
 
-  const selectedFilter = evt.target.value;
-  if (!(selectedFilter === 'none')) {
-    filtersLevelSlider.removeAttribute('disabled');
-    imgUploadEffectLevel.classList.remove('hidden');
-    imgUploadPreview.className = 'img-upload__preview';
-    imgUploadPreview.classList.add(`effects__preview--${selectedFilter}`);
-    filtersLevelSlider.noUiSlider.updateOptions(filters[selectedFilter].options);
-    updateFilters(filters[selectedFilter]);
-  } else {
-    resetFilters();
-  }
-};
+    if (element.value === 'phobos') {
+      settings.range.max = 3;
+      settings.start = 3;
+    }
 
-filtersList.addEventListener('change', onFiltersListChange);
+    if (element.value === 'heat') {
+      settings.range.min = 1;
+      settings.range.max = 3;
+      settings.start = 3;
+    }
 
-export {updateFilters};
+    if (element.value === 'none') {
+      resetFilters();
+    } else {
+      imgUploadPreviewImg.classList.add(`effects__preview--${element.value}`);
+      filtersLevel.classList.remove('hidden');
+      filtersLevelSlider.noUiSlider.updateOptions(settings);
+    }
+  });
+});
+
+export {resetFilters};
