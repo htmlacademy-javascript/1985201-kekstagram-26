@@ -104,4 +104,4 @@ effectButtons.forEach((element) => {
   });
 });
 
-export {resetFilters};
+export {resetFilters, imgUploadPreviewImg};
