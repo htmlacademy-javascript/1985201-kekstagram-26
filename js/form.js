@@ -57,3 +57,5 @@ function closeUploadOverlay () {
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonClick);
   imgUploadCloseButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
 }
+
+export { closeUploadOverlay };

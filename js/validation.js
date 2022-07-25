@@ -1,4 +1,6 @@
-import {isEscapeKey} from './util.js';
+import { isEscapeKey } from './util.js';
+import { sendData, getMessageAboutSuccess, getMessageAboutError } from './server-interaction.js';
+import { closeUploadOverlay } from './form.js';
 
 /*Константы*/
 
@@ -99,7 +101,16 @@ const onFormSubmit = (evt) => {
   evt.preventDefault();
   const isValid = pristine.validate();
   if (isValid) {
-    imgUploadForm.submit();
+    sendData(
+      () => {
+        closeUploadOverlay();
+        getMessageAboutSuccess('Ура, это успех!');
+      },
+      () => {
+        getMessageAboutError('Упс...Ошибка в загрузке данных');
+      },
+      new FormData(evt.target),
+    );
   }
   hashtagInput.value = '';
   commentInput.value = '';

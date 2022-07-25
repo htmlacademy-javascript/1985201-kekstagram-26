@@ -32,3 +32,5 @@ const renderPictures = () => {
 };
 
 renderPictures();
+
+export { renderPictures };
