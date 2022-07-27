@@ -13,27 +13,6 @@ const getRandomNumbers = (min, max) => {
   }
 };
 
-/*Функция выбора случайного элемента массива*/
-
-const getRandomArrayElement = (elements) => elements[getRandomNumbers(0, elements.length - 1)];
-
-/*Функция определения максимальной длины строки*/
-
-const calculateMaxLength = (content, maxLength) => {
-  const result = maxLength - content.length;
-  if (result > 0) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-/*Вызов функции определения максимальной длины строки, чтобы линтер не ругался*/
-
-calculateMaxLength ('I Love Js', 10);
-
-export {getRandomNumbers, getRandomArrayElement};
-
 /*ESC*/
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -42,4 +21,4 @@ const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const isEnterKey = (evt) => evt.key === 'Enter';
 
-export {isEscapeKey, isEnterKey};
+export {isEscapeKey, isEnterKey, getRandomNumbers};

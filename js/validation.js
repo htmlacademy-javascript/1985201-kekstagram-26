@@ -1,6 +1,9 @@
-import {isEscapeKey} from './util.js';
+import { isEscapeKey } from './util.js';
+import { sendData } from './server-interaction.js';
+import { getMessageAboutSuccess, getMessageAboutError } from './messages.js';
+import { closeUploadOverlay } from './form.js';
 
-/*Константы*/
+/*Класс из index.html*/
 
 const imgUploadForm = document.querySelector('.img-upload__form');
 const hashtagInput = imgUploadForm.querySelector('.text__hashtags');
@@ -17,7 +20,7 @@ const onInputEscKeydown = (evt) => {
 
 hashtagInput.addEventListener('keydown', onInputEscKeydown);
 
-/*Валидация формы*/
+/*Валидация всей формы*/
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -28,11 +31,9 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextClass: 'input__error'
 });
 
-/*Комментарии*/
+/*Валидация комментариев*/
 
-function matchCommentSymbolsAmount() {
-  return commentInput.value.length <= 140;
-}
+const matchCommentSymbolsAmount = () => commentInput.value.length <= 140;
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__description'),
@@ -40,13 +41,11 @@ pristine.addValidator(
   'Количество символов в комментарии не должно превышать 140'
 );
 
-/*Хеш-тэги*/
+/*Валидация хеш-тэгов*/
 
 /*Проверка хэш-тегов на кол-во не более 5*/
 
-function matchHastagsAmount() {
-  return hashtagInput.value.split(' ').length <= 5;
-}
+const matchHastagsAmount = () => hashtagInput.value.split(' ').length <= 5;
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
@@ -61,17 +60,19 @@ pristine.addValidator(
 - хеш-тег не может состоять только из одной решётки;
 - максимальная длина одного хэш-тега 20 символов, включая решётку;*/
 
-function checkHastagsСontent () {
+const checkHastagsСontent = () => {
   const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
   const arrHashtags = hashtagInput.value.split(' ');
 
   for (const hashtag of arrHashtags) {
-    if (regularExpression.test(hashtag) === false) {
+    if (hashtagInput.value.length === 0) {
+      return true;
+    } else if (regularExpression.test(hashtag) === false) {
       return false;
     }
+    return true;
   }
-  return true;
-}
+};
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
@@ -81,11 +82,10 @@ pristine.addValidator(
 
 /*Проверка хэш-тегов на неповторение*/
 
-function areHashtagsUnique() {
+const areHashtagsUnique = () => {
   const arrHashtags = hashtagInput.value.split(' ').map((item) => item.toLowerCase());
-  window.console.log(arrHashtags);
   return (new Set(arrHashtags)).size === arrHashtags.length;
-}
+};
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
@@ -99,7 +99,16 @@ const onFormSubmit = (evt) => {
   evt.preventDefault();
   const isValid = pristine.validate();
   if (isValid) {
-    imgUploadForm.submit();
+    sendData(
+      () => {
+        closeUploadOverlay();
+        getMessageAboutSuccess('Ура, это успех!');
+      },
+      () => {
+        getMessageAboutError('Упс...Ошибка в загрузке данных');
+      },
+      new FormData(evt.target),
+    );
   }
   hashtagInput.value = '';
   commentInput.value = '';

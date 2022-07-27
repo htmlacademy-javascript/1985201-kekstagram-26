@@ -1,5 +1,7 @@
-import './data.js';
-import './render.js';
-import './render-big-pic.js';
-import './form.js';
-import './hashtags-validation.js';
+import {renderAfterLoading} from './render.js';
+import './validation.js';
+import './upload-img.js';
+import { getData } from './server-interaction.js';
+import { getMessageAboutError } from './messages.js';
+
+getData(renderAfterLoading, getMessageAboutError);
