@@ -68,8 +68,6 @@ const renderBigPicture = (url, comments, likes, description) => {
   commentsCount.textContent = comments.length;
   socialCaption.textContent = description;
 
-  /*Загрузка комментариев (по 5 шт за раз)*/
-
   /*Переменные для начального кол-ва комментариев и кол-ва комментариев к показу*/
 
   let COMMENTS_QUANTITY = 0;
