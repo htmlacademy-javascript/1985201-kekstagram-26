@@ -1,10 +1,7 @@
-import './data.js';
-import './render.js';
-import './render-big-pic.js';
-import './form.js';
+import {renderAfterLoading} from './render.js';
 import './validation.js';
-import './scale.js';
-import './filters.js';
 import './upload-img.js';
-import './server-interaction.js';
-import './filter.js';
+import { getData } from './server-interaction.js';
+import { getMessageAboutError } from './messages.js';
+
+getData(renderAfterLoading, getMessageAboutError);

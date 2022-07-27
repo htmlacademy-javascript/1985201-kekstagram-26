@@ -1,30 +1,29 @@
+/*Классы из index.html*/
 
-/*Константы*/
-
-// const imgUploadPreview = document.querySelector('.img-upload__preview');
 const imgUploadPreviewImg = document.querySelector('.img-upload__preview  img');
-const filtersLevelSlider = document.querySelector('.effect-level__slider');
-const filtersLevel = document.querySelector('.effect-level');
-const filtersLevelValue = document.querySelector('.effect-level__value');
+const effectsLevelSlider = document.querySelector('.effect-level__slider');
+const effectssLevel = document.querySelector('.effect-level');
+const effectsLevelValue = document.querySelector('.effect-level__value');
 const effectButtons = document.querySelectorAll('[name="effect"]');
 const noEffect = document.getElementById('effect-none');
 
 /*Сброс шкалы для изображения без фильтров*/
 
-filtersLevel.classList.add('hidden');
+effectssLevel.classList.add('hidden');
 
 /*Функция очистки стилей*/
 
 const resetFilters = () => {
-  filtersLevel.classList.add('hidden');
+  effectssLevel.classList.add('hidden');
   imgUploadPreviewImg.removeAttribute('class');
   imgUploadPreviewImg.removeAttribute('style');
+  effectsLevelValue.value = '0.00';
   noEffect.checked = true;
 };
 
 /*Базовые характеристики слайдера*/
 
-const sliderBasic = {
+const sliderBasicSettings = {
   range: {
     min: 0,
     max: 1,
@@ -36,29 +35,29 @@ const sliderBasic = {
 
 /*Поключение библиотеки noUiSlider*/
 
-noUiSlider.create(filtersLevelSlider, sliderBasic);
+noUiSlider.create(effectsLevelSlider, sliderBasicSettings);
 
 /*Изменение интенсивности фильтров*/
 
-filtersLevelSlider.noUiSlider.on('update', () => {
+effectsLevelSlider.noUiSlider.on('update', () => {
 
-  const sliderValue = filtersLevelSlider.noUiSlider.get();
-  filtersLevelValue.value = sliderValue;
-  const selectedFilter = document.querySelector('input[name="effect"]:checked');
+  const sliderValue = effectsLevelSlider.noUiSlider.get();
+  effectsLevelValue.value = sliderValue;
+  const selectedEffect = document.querySelector('input[name="effect"]:checked');
 
-  if (selectedFilter.value === 'chrome') {
+  if (selectedEffect.value === 'chrome') {
     imgUploadPreviewImg.style.filter = `grayscale(${sliderValue})`;
   }
-  if (selectedFilter.value === 'sepia') {
+  if (selectedEffect.value === 'sepia') {
     imgUploadPreviewImg.style.filter = `sepia(${sliderValue})`;
   }
-  if (selectedFilter.value === 'marvin') {
+  if (selectedEffect.value === 'marvin') {
     imgUploadPreviewImg.style.filter = `invert(${sliderValue}%)`;
   }
-  if (selectedFilter.value === 'phobos') {
+  if (selectedEffect.value === 'phobos') {
     imgUploadPreviewImg.style.filter = `blur(${sliderValue}px)`;
   }
-  if (selectedFilter.value === 'heat') {
+  if (selectedEffect.value === 'heat') {
     imgUploadPreviewImg.style.filter = `brightness(${sliderValue})`;
   }
 });
@@ -98,8 +97,8 @@ effectButtons.forEach((element) => {
       resetFilters();
     } else {
       imgUploadPreviewImg.classList.add(`effects__preview--${element.value}`);
-      filtersLevel.classList.remove('hidden');
-      filtersLevelSlider.noUiSlider.updateOptions(settings);
+      effectssLevel.classList.remove('hidden');
+      effectsLevelSlider.noUiSlider.updateOptions(settings);
     }
   });
 });

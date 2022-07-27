@@ -1,6 +1,6 @@
 import {isEscapeKey, isEnterKey} from './util.js';
 
-/*Список констант*/
+/*Классы из index.html*/
 
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImg = bigPicture.querySelector('.big-picture__img').querySelector('img');
@@ -16,14 +16,19 @@ const commentListFragment = document.createDocumentFragment();
 
 /*Открытие*/
 
-function openBigPicture () {
+const openBigPicture = () => {
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
-}
+};
 
 /*Закрытие*/
 
 /*Закрытие с помощью нажатия ESC и ENTER и кликом по кнопке*/
+
+const closeBigPicture = () => {
+  bigPicture.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+};
 
 const onDocumentEscKeydown = (evt) => {
   if ( isEscapeKey(evt) ) {
@@ -48,13 +53,6 @@ document.addEventListener('keydown', onDocumentEscKeydown);
 closeButton.addEventListener('keydown', onCloseButtonEnterKeydown);
 closeButton.addEventListener('click', onCloseButtonClick);
 
-function closeBigPicture () {
-  bigPicture.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  closeButton.removeEventListener('keydown', onCloseButtonEnterKeydown);
-  closeButton.removeEventListener('keydown', onCloseButtonClick);
-}
-
 /*Отрисовка большой картинки*/
 
 const renderBigPicture = (url, comments, likes, description) => {
@@ -70,12 +68,10 @@ const renderBigPicture = (url, comments, likes, description) => {
   commentsCount.textContent = comments.length;
   socialCaption.textContent = description;
 
-  /*Загрузка комментариев (по 5 шт за раз)*/
-
   /*Переменные для начального кол-ва комментариев и кол-ва комментариев к показу*/
 
-  let commentsQuantity = 0;
-  const maximumQuantityToShow = 5;
+  let COMMENTS_QUANTITY = 0;
+  const MAX_COMMENTS_QUANTITY_TO_SHOW = 5;
 
   /*Функция, показывающая по 5 комментариев*/
 
@@ -83,7 +79,7 @@ const renderBigPicture = (url, comments, likes, description) => {
 
     /*Отрисовка*/
 
-    comments.slice(0, commentsQuantity += maximumQuantityToShow).forEach((comment) => {
+    comments.slice(0, COMMENTS_QUANTITY += MAX_COMMENTS_QUANTITY_TO_SHOW).forEach((comment) => {
 
       const newComment = socialCommentTemplate.cloneNode(true);
       const commentAvatar = newComment.querySelector('.social__picture');
@@ -101,12 +97,12 @@ const renderBigPicture = (url, comments, likes, description) => {
 
     /*Условие проверки количества комментариев*/
 
-    if (commentsQuantity >= comments.length) {
+    if (COMMENTS_QUANTITY >= comments.length) {
       commentsLoader.classList.add('hidden');
       socialCommentCount.textContent = `${comments.length} из ${comments.length} комментариев`;
     } else {
       commentsLoader.classList.remove('hidden');
-      socialCommentCount.textContent = `${commentsQuantity} из ${comments.length} комментариев`;
+      socialCommentCount.textContent = `${COMMENTS_QUANTITY} из ${comments.length} комментариев`;
     }
   };
 

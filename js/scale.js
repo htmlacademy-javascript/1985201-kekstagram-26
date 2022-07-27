@@ -1,39 +1,39 @@
 /*Изменение масштаба изображения*/
 
-/*Константы*/
+/*Классы из index.html*/
 
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const scaleControlValue = document.querySelector('.scale__control--value');
 const scaleControlSmaller = document.querySelector('.scale__control--smaller');
 const scaleControlBigger = document.querySelector('.scale__control--bigger');
-const startPhotoSize = 100;
+
+/*Константы*/
+
+const START_PHOTO_SIZE = 100;
+const WHOLE_PERCENTAGE = 100;
+const PERCENTAGE_STEP = 25;
 
 /*Присвоение текущему значению шкалы масштаба начального значения в 100% без применения эффектов*/
 
-let currentPhotoSize = startPhotoSize;
-
-const catchStartPhotoSize = () => {
-  imgUploadPreview.style.transform = '';
-  scaleControlValue.value = `${startPhotoSize}%`;
-};
+let CURRENT_PHOTO_SIZE = START_PHOTO_SIZE;
 
 /*Увеличение изображения*/
 
 const onSmallerButtonClick = () => {
-  if (currentPhotoSize > 25) {
-    currentPhotoSize = currentPhotoSize - 25;
-    scaleControlValue.value = `${currentPhotoSize}%`;
-    imgUploadPreview.style.transform = `scale(${currentPhotoSize / 100})`;
+  if (CURRENT_PHOTO_SIZE > PERCENTAGE_STEP) {
+    CURRENT_PHOTO_SIZE = CURRENT_PHOTO_SIZE - PERCENTAGE_STEP;
+    scaleControlValue.value = `${CURRENT_PHOTO_SIZE}%`;
+    imgUploadPreview.style.transform = `scale(${CURRENT_PHOTO_SIZE / WHOLE_PERCENTAGE})`;
   }
 };
 
 /*Уменьшение изображения*/
 
 const onBiggerButtonClick = () => {
-  if (currentPhotoSize < 100) {
-    currentPhotoSize = currentPhotoSize + 25;
-    scaleControlValue.value = `${currentPhotoSize}%`;
-    imgUploadPreview.style.transform = `scale(${currentPhotoSize / 100})`;
+  if (CURRENT_PHOTO_SIZE < WHOLE_PERCENTAGE) {
+    CURRENT_PHOTO_SIZE = CURRENT_PHOTO_SIZE + PERCENTAGE_STEP;
+    scaleControlValue.value = `${CURRENT_PHOTO_SIZE}%`;
+    imgUploadPreview.style.transform = `scale(${CURRENT_PHOTO_SIZE / WHOLE_PERCENTAGE})`;
   }
 };
 
@@ -43,9 +43,9 @@ scaleControlSmaller.addEventListener('click', onSmallerButtonClick);
 scaleControlBigger.addEventListener('click', onBiggerButtonClick);
 
 const resetScale = () => {
-  currentPhotoSize = startPhotoSize;
+  CURRENT_PHOTO_SIZE = START_PHOTO_SIZE;
   imgUploadPreview.style.transform = '';
-  scaleControlValue.value = `${startPhotoSize}%`;
+  scaleControlValue.value = `${START_PHOTO_SIZE}%`;
 };
 
-export { catchStartPhotoSize, scaleControlValue, resetScale };
+export { scaleControlValue, resetScale };

@@ -1,17 +1,13 @@
-import {createPosts} from './data.js';
-import {renderBigPicture} from './render-big-pic.js';
+import { renderBigPicture } from './render-big-pic.js';
+import { initFilters } from './filter.js';
 
 /*Отрисовка миниатюр постов пользователей с лайками и комментариями*/
 
-const renderPictures = () => {
-
+const renderPictures = (similarPosts) => {
   const usersPosts = document.querySelector('.pictures');
-
   const similarPostTemplate = document.querySelector('#picture')
     .content
     .querySelector('.picture');
-
-  const similarPosts = createPosts();
 
   const similarListFragment = document.createDocumentFragment();
 
@@ -28,9 +24,11 @@ const renderPictures = () => {
   });
 
   usersPosts.appendChild(similarListFragment);
-
 };
 
-renderPictures();
+const renderAfterLoading = (posts) => {
+  renderPictures(posts);
+  initFilters(posts);
+};
 
-export { renderPictures };
+export { renderPictures, renderAfterLoading };

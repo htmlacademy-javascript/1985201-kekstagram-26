@@ -1,8 +1,10 @@
-import {imgUploadPreviewImg} from './filters.js';
+import { imgUploadPreviewImg } from './effects.js';
 
-/*Константа*/
+/*Класс из index.html*/
 
 const imgUploadInput = document.querySelector('.img-upload__input');
+
+/*Реализация загрузки изображения*/
 
 const onInputChange = (evt) => {
   evt = evt.target;

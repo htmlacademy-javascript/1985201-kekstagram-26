@@ -1,8 +1,14 @@
 import { renderPictures } from './render.js';
+import { getRandomNumbers } from './util.js';
+
+/*timeoutDelay для функции устранения дребезга и кол-во случайных постов*/
+
+const TIMEOUT_DELAY = 500;
+const RANDOM_POSTS_QUANTITY = 10;
 
 /*Функция устранения дребезга*/
 
-function debounce (callback, timeoutDelay = 500) {
+const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) => {
   let timeoutId;
 
   return (...rest) => {
@@ -10,13 +16,12 @@ function debounce (callback, timeoutDelay = 500) {
 
     timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
   };
-}
+};
 
-/*Константы (то, что есть в index.html)*/
+/*Классы из index.html*/
 
 const imgFilters = document.querySelector('.img-filters');
 const imgFiltersForm = imgFilters.querySelector('.img-filters__form');
-const imgFilterButton = imgFiltersForm.querySelectorAll('.img-filters__button');
 
 /*Виды фильтров*/
 
@@ -24,30 +29,31 @@ const filterDefault = document.querySelector('#filter-default');
 const filterRandom = document.querySelector('#filter-random');
 const filterDiscussed = document.querySelector('#filter-discussed');
 
-/*Показ фильтров*/
-
-imgFilters.classList.remove('img-filters--inactive');
-imgFilters.classList.add('img-filters--active');
-
 /*Перетасовка*/
 
-const shuffle = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+const shuffle = (posts) => {
+  const postsCopy = posts.slice();
+  const randomPosts = [];
+
+  for (let i = 0; i < posts.length; i++) {
+    const randomIndex = getRandomNumbers(0, (postsCopy.length - 1));
+    const picture = postsCopy.splice(randomIndex, 1)[0];
+    randomPosts.push(picture);
   }
+
+  return randomPosts;
 };
 
 /*Cлучайные посты*/
 
-const randomFilter = ( posts ) => {
+const useRandomFilter = ( posts ) => {
   const shuffledPosts = shuffle(posts);
-  return shuffledPosts.slice(0, 10);
+  return shuffledPosts.slice(0, RANDOM_POSTS_QUANTITY);
 };
 
 /*Обсуждаемые посты*/
 
-const discussFilter = ( posts ) => posts.slice().sort((firstPost, secondPost) => secondPost.comments.length - firstPost.comments.length);
+const useDiscussFilter = ( posts ) => posts.slice().sort((firstPost, secondPost) => secondPost.comments.length - firstPost.comments.length);
 
 /*Функция удаления постов*/
 
@@ -60,7 +66,7 @@ const deletePosts = ( ) => {
 
 /*Переключение фильтров*/
 
-const changeFilterFunction = (filterTitle) => {
+const changeFilter = (filterTitle) => {
   document.querySelectorAll('.img-filters__button').forEach((element) => element.classList.remove('img-filters__button--active'));
   document.querySelector(`#${filterTitle}`).classList.add('img-filters__button--active');
 };
@@ -70,40 +76,29 @@ const changeFilterFunction = (filterTitle) => {
 const changePostsAccordingFilters = (evt, posts) => {
   const filter = evt.target.id;
   deletePosts();
-  if (filter === filterDefault) {
+  if (filter === filterDefault.getAttribute('id')) {
     debounce(() => {
-      changeFilterFunction(filter);
+      changeFilter(filter);
       renderPictures(posts);
-    }, 500)();
-  } else if (filter === filterDiscussed) {
+    }, TIMEOUT_DELAY)();
+  } else if (filter === filterDiscussed.getAttribute('id')) {
     debounce(() => {
-      changeFilterFunction(filter);
-      renderPictures(discussFilter(posts));
-    }, 500)();
-  } else if (filter === filterRandom) {
+      changeFilter(filter);
+      renderPictures(useDiscussFilter(posts));
+    }, TIMEOUT_DELAY)();
+  } else if (filter === filterRandom.getAttribute('id')) {
     debounce(() => {
-      changeFilterFunction(filter);
-      renderPictures(randomFilter(posts, 10));
-    }, 500)();
+      changeFilter(filter);
+      renderPictures(useRandomFilter(posts, 10));
+    }, TIMEOUT_DELAY)();
   }
 };
 
-/*Активация фильтра*/
+/*Показ постов согласно фильтру*/
 
-const enableFilter = () => {
-  imgFilterButton.forEach((button) => {
-    button.disabled = false;
-  });
+const initFilters = (posts) => {
+  imgFilters.classList.remove('img-filters--inactive');
+  imgFiltersForm.addEventListener('click', (evt) => changePostsAccordingFilters(evt, posts));
 };
 
-/*Слушатель события*/
-
-const onFilterClick = ( evt, posts ) => {
-  changePostsAccordingFilters(evt, posts);
-};
-
-imgFiltersForm.addEventListener('click', onFilterClick);
-
-enableFilter();
-
-export { changePostsAccordingFilters };
+export { initFilters };
