@@ -9,6 +9,11 @@ const imgUploadForm = document.querySelector('.img-upload__form');
 const hashtagInput = imgUploadForm.querySelector('.text__hashtags');
 const commentInput = imgUploadForm.querySelector('.text__description');
 
+/*Константы*/
+
+const COMMENT_MAX_LENGTH = 140;
+const HASTAGS_MAX_QUANTITY = 5;
+
 /*Отмена работы ESС при фокусе*/
 
 const onInputEscKeydown = (evt) => {
@@ -33,24 +38,24 @@ const pristine = new Pristine(imgUploadForm, {
 
 /*Валидация комментариев*/
 
-const matchCommentSymbolsAmount = () => commentInput.value.length <= 140;
+const matchCommentSymbolsAmount = () => commentInput.value.length <= COMMENT_MAX_LENGTH;
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__description'),
   matchCommentSymbolsAmount,
-  'Количество символов в комментарии не должно превышать 140'
+  `Количество символов в комментарии не должно превышать ${COMMENT_MAX_LENGTH}`
 );
 
 /*Валидация хеш-тэгов*/
 
 /*Проверка хэш-тегов на кол-во не более 5*/
 
-const matchHastagsAmount = () => hashtagInput.value.split(' ').length <= 5;
+const matchHastagsAmount = () => hashtagInput.value.split(' ').length <= HASTAGS_MAX_QUANTITY;
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
   matchHastagsAmount,
-  'Количество хэш-тегов не должно превышать 5'
+  `Количество хэш-тегов не должно превышать ${HASTAGS_MAX_QUANTITY}`
 );
 
 /*Проверка хэш-тегов на соответствие заданным параметрам:
@@ -60,23 +65,23 @@ pristine.addValidator(
 - хеш-тег не может состоять только из одной решётки;
 - максимальная длина одного хэш-тега 20 символов, включая решётку;*/
 
-const checkHastagsСontent = () => {
+const checkHastagsСontent = (hashtag) => {
   const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
-  const arrHashtags = hashtagInput.value.split(' ');
+  return regularExpression.test(hashtag);
+};
 
-  for (const hashtag of arrHashtags) {
-    if (hashtagInput.value.length === 0) {
-      return true;
-    } else if (regularExpression.test(hashtag) === false) {
-      return false;
-    }
+const validateHastagsСontent = (arrHashtags) => {
+  if (hashtagInput.value.length === 0) {
     return true;
+  } else if (!(arrHashtags.split(' ').every(checkHastagsСontent))) {
+    return false;
   }
+  return true;
 };
 
 pristine.addValidator(
   imgUploadForm.querySelector('.text__hashtags'),
-  checkHastagsСontent,
+  validateHastagsСontent,
   'Хэш-тег должен иметь определённый синтаксис'
 );
 
@@ -115,3 +120,5 @@ const onFormSubmit = (evt) => {
 };
 
 imgUploadForm.addEventListener('submit', onFormSubmit);
+
+export { hashtagInput, commentInput };

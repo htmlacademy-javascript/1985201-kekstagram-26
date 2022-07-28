@@ -1,6 +1,7 @@
 import { isEscapeKey, isEnterKey } from './util.js';
 import { resetScale } from './scale.js';
 import { resetFilters } from './effects.js';
+import { hashtagInput, commentInput } from './validation.js';
 
 /*Классы из index.html*/
 
@@ -13,6 +14,7 @@ const imgUploadCloseButton = document.querySelector('.img-upload__cancel');
 const openUploadOverlay = () => {
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
+  document.addEventListener('keydown', onDocumentEscKeydown);
 };
 
 const onLabelChange = () => {
@@ -29,16 +31,19 @@ const closeUploadOverlay = () => {
   imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   imgUploadLabelId.value = null;
+  hashtagInput.value = '';
+  commentInput.value = '';
   resetScale();
   resetFilters();
+  document.removeEventListener('keydown', onDocumentEscKeydown);
 };
 
-const onDocumentEscKeydown = (evt) => {
+function onDocumentEscKeydown (evt) {
   if ( isEscapeKey(evt) ) {
     evt.preventDefault();
     closeUploadOverlay();
   }
-};
+}
 
 const onCloseButtonEnterKeydown = (evt) => {
   if ( isEnterKey(evt) ) {
@@ -52,7 +57,6 @@ const onCloseButtonClick = (evt) => {
   closeUploadOverlay();
 };
 
-document.addEventListener('keydown', onDocumentEscKeydown);
 imgUploadCloseButton.addEventListener('keydown', onCloseButtonEnterKeydown);
 imgUploadCloseButton.addEventListener('click', onCloseButtonClick);
 
