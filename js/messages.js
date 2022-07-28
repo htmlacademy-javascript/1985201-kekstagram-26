@@ -20,6 +20,7 @@ const getMessageAboutSuccess = (title) => {
     if ( isEscapeKey(evt) ) {
       evt.preventDefault();
       message.remove();
+      document.removeEventListener('keydown', onDocumentEscKeydown);
     }
   };
 
@@ -28,6 +29,7 @@ const getMessageAboutSuccess = (title) => {
   const onEventTargetClick = (evt) => {
     if (evt.target === document.querySelector('.success') && evt.target !== document.querySelector('.success__inner')) {
       message.remove();
+      document.removeEventListener('click', onEventTargetClick);
     }
   };
 
@@ -58,6 +60,7 @@ const getMessageAboutError = (title) => {
     if ( isEscapeKey(evt) ) {
       evt.preventDefault();
       message.remove();
+      document.removeEventListener('keydown', onDocumentEscKeydown);
     }
   };
 

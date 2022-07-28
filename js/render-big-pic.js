@@ -19,6 +19,7 @@ const commentListFragment = document.createDocumentFragment();
 const openBigPicture = () => {
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
+  document.addEventListener('keydown', onDocumentEscKeydown);
 };
 
 /*Закрытие*/
@@ -28,14 +29,15 @@ const openBigPicture = () => {
 const closeBigPicture = () => {
   bigPicture.classList.add('hidden');
   document.body.classList.remove('modal-open');
+  document.removeEventListener('keydown', onDocumentEscKeydown);
 };
 
-const onDocumentEscKeydown = (evt) => {
+function onDocumentEscKeydown (evt) {
   if ( isEscapeKey(evt) ) {
     evt.preventDefault();
     closeBigPicture();
   }
-};
+}
 
 const onCloseButtonEnterKeydown = (evt) => {
   if ( isEnterKey(evt) ) {
@@ -49,7 +51,6 @@ const onCloseButtonClick = (evt) => {
   closeBigPicture();
 };
 
-document.addEventListener('keydown', onDocumentEscKeydown);
 closeButton.addEventListener('keydown', onCloseButtonEnterKeydown);
 closeButton.addEventListener('click', onCloseButtonClick);
 
@@ -70,7 +71,7 @@ const renderBigPicture = (url, comments, likes, description) => {
 
   /*Переменные для начального кол-ва комментариев и кол-ва комментариев к показу*/
 
-  let COMMENTS_QUANTITY = 0;
+  let commentsQuantity = 0;
   const MAX_COMMENTS_QUANTITY_TO_SHOW = 5;
 
   /*Функция, показывающая по 5 комментариев*/
@@ -79,7 +80,9 @@ const renderBigPicture = (url, comments, likes, description) => {
 
     /*Отрисовка*/
 
-    comments.slice(0, COMMENTS_QUANTITY += MAX_COMMENTS_QUANTITY_TO_SHOW).forEach((comment) => {
+    commentsQuantity += MAX_COMMENTS_QUANTITY_TO_SHOW;
+
+    comments.slice(0, commentsQuantity).forEach((comment) => {
 
       const newComment = socialCommentTemplate.cloneNode(true);
       const commentAvatar = newComment.querySelector('.social__picture');
@@ -97,12 +100,12 @@ const renderBigPicture = (url, comments, likes, description) => {
 
     /*Условие проверки количества комментариев*/
 
-    if (COMMENTS_QUANTITY >= comments.length) {
+    if (commentsQuantity >= comments.length) {
       commentsLoader.classList.add('hidden');
       socialCommentCount.textContent = `${comments.length} из ${comments.length} комментариев`;
     } else {
       commentsLoader.classList.remove('hidden');
-      socialCommentCount.textContent = `${COMMENTS_QUANTITY} из ${comments.length} комментариев`;
+      socialCommentCount.textContent = `${commentsQuantity} из ${comments.length} комментариев`;
     }
   };
 
